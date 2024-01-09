@@ -9,6 +9,9 @@ jobs:
         environment: Dev
 
         steps:
+            - name: Verify AWS Version
+              run: aws --version
+              
             - name: Configure AWS Credentials
               env:
                 AWS_ACCESS_KEY_ID: ${{ secrets.AWS_ACCESS_KEY_ID }}
