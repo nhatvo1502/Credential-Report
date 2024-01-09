@@ -5,7 +5,7 @@ on:
 
 jobs:
   generate-export-credential-report:
-    runs-on: windows-latest
+    runs-on: ubuntu-latest
     environment: Dev
 
     steps:
