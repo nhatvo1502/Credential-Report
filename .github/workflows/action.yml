@@ -1,0 +1,43 @@
+name: action
+
+on:
+    workflow_dispatch:
+
+jobs:
+    generate-credential-report:
+        runs-on: windows-latest
+        environment: Dev
+
+        steps:
+            - name: Configure AWS Credentials
+              env:
+                AWS_ACCESS_KEY_ID: ${{ secrets.AWS_ACCESS_KEY_ID }}
+                AWS_SECRET_ACCESS_KEY: ${{ secrets.AWS_SECRET_ACCESS_KEY }}
+                AWS_DEFAULT_REGION: 'us-east-1'
+              run: |
+                mkdir -p ~/.aws
+                echo "[default]" > ~/.aws/credentials
+                echo "aws_access_key_id=${AWS_ACCESS_KEY_ID}" >> ~/.aws/credentials
+                echo "aws_secret_access_key=${AWS_SECRET_ACCESS_KEY}" >> ~/.aws/credentials
+                echo "region=${AWS_DEFAULT_REGION}" >> ~/.aws/credentials
+
+            - name: Verify AWS Credential
+              run: aws configure list
+            
+            - name: Verify S3 permission
+              run: aws s3 ls
+
+            - name: Generate Credential Report
+              run: aws ami generate-credential-repor
+            
+            - name: Download report and paste it into a variable
+              run: $credReport = (aws iam get-credential-report --query 'Content' --output text)
+            
+            - name: Convert to UTF8
+              run: $credReport = [System.Text.Encoding]::UTF8.GetString([System.Convert]::FromBase64String($reportContent))
+
+            - name: Export to csv file
+              run: $credReport | Out-File -FilePath "credential-report.csv" -Encoding UTF8
+
+            - name: Show it
+              run: cat credential-report.csv
