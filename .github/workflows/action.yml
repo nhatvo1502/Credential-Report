@@ -4,8 +4,8 @@ on:
   workflow_dispatch:
 
 jobs:
-  create-keypair:
-    runs-on: ubuntu-latest
+  generate-export-credential-report:
+    runs-on: windows-latest
     environment: Dev
 
     steps:
