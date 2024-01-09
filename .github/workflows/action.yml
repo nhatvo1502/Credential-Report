@@ -29,3 +29,21 @@ jobs:
 
       - name: Verify s3 permission
         run: aws s3 ls
+      
+      - name: Generate Credential Report
+        run: aws iam generate-credential-report
+      
+      - name: Wait for 5 second
+        run: sleep 5
+      
+      - name: Retrieve report
+        run: report_content=$(aws iam get-credential-report --query 'Content' --output text)
+      
+      - name: Decode report
+        run: report_text=$(echo "$report_content" | base64 -d)
+      
+      - name: Save report to csv file
+        run: echo "$report_text" > credential-report.csv
+      
+      - name: Copy the report to s3
+        run: aws s3 cp ./credential-report.csv s3://keypair-1234
