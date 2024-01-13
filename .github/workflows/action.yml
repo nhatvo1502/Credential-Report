@@ -40,7 +40,7 @@ jobs:
         run: report_content=$(aws iam get-credential-report --query 'Content' --output text)
       
       - name: Verify report_content
-        run: cat report_content  
+        run: report_content  
 
       - name: Decode report
         run: report_text=$(echo "$report_content" | base64 -d)
